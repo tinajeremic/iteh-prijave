@@ -1,4 +1,28 @@
+<?php
+require "dbBroker.php";
+require "model/prijava.php";
 
+session_start();
+
+if(!isset($_SESSION['user_id'])){
+    header('Location:index.php');
+    exit();
+}
+
+$rezultat = Prijava::getAll($conn);
+
+if(!$rezultat){
+    echo "Nastala je greška prilikom izvođenja upitanja <br>";
+    die();
+}
+
+if($rezultat->num_rows==0){
+    echo "Nema prijava na kolokvijume";
+    die();
+}
+else{
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +70,9 @@
             </tr>
             </thead>
             <tbody>
-
+            <?php 
+                while($red=$rezultat->fetch_array()):
+            ?>
                 <tr>
                     <td><?php echo $red["predmet"] ?></td>
                     <td><?php echo $red["katedra"] ?></td>
@@ -60,6 +86,11 @@
                     </td>
 
                 </tr>
+                <?php
+                endwhile;
+
+            } //zatvaranje else-a
+                ?>
 
             </tbody>
         </table>
@@ -85,7 +116,7 @@
 <div class="modal fade" id="myModal" role="dialog" >
     <div class="modal-dialog">
 
-        <!--Sadrzaj modala-->
+        <!--Sadrzaj Zakaži modala-->
         <div class="modal-content" >
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
